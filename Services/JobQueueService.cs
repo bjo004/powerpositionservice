@@ -20,7 +20,7 @@ public class JobQueueService
         ILogger<JobQueueService> logger)
     {
         _logger = logger;
-        
+
         var baseDir = Path.GetFullPath(options.Value.OutputDirectory);
         _pendingDir = Path.Combine(baseDir, "pending");
         _doneDir = Path.Combine(baseDir, "done");

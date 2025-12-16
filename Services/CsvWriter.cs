@@ -82,7 +82,7 @@ public class CsvWriter
                     // Ignore cleanup failures
                 }
             }
-            
+
             throw;
         }
     }

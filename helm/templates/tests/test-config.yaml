@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "power-position-service.fullname" . }}-test-config"
+  labels:
+    {{- include "power-position-service.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  restartPolicy: Never
+  automountServiceAccountToken: false
+  containers:
+    - name: smoke
+      image: busybox:1.36
+      command:
+        - sh
+        - -c
+        - |
+          set -e
+          echo "== appsettings.json (mounted) =="
+          test -f /app/appsettings.json
+          cat /app/appsettings.json | head -n 50
+          echo
+          echo "== PowerPositionService env overrides =="
+          env | grep '^PowerPositionService__' || true
+          echo
+          echo "Smoke test passed."
+      env:
+        - name: PowerPositionService__OutputDirectory
+          value: "{{ .Values.powerPositionService.outputDirectory }}"
+        - name: PowerPositionService__LogDirectory
+          value: "{{ .Values.powerPositionService.logDirectory }}"
+        - name: PowerPositionService__EnableFileLog
+          value: "{{ ternary "true" "false" .Values.powerPositionService.enableFileLog }}"
+        - name: PowerPositionService__DailyRunTime
+          value: "{{ .Values.powerPositionService.dailyRunTime }}"
+        - name: PowerPositionService__TimeZone
+          value: "{{ .Values.powerPositionService.timeZone }}"
+        - name: PowerPositionService__PowerDayApiUrl
+          value: "{{ .Values.powerPositionService.powerDayApiUrl }}"
+      volumeMounts:
+        - name: config
+          mountPath: /app/appsettings.json
+          subPath: appsettings.json
+          readOnly: true
+  volumes:
+    - name: config
+      configMap:
+        name: {{ include "power-position-service.fullname" . }}-config

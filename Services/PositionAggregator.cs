@@ -54,7 +54,7 @@ public class PositionAggregator
         // Sort by local time (23:00, 00:00, 01:00, ..., 22:00)
         // This is already in period order which matches the required output
         _logger.LogDebug("Aggregation complete, {PositionCount} positions generated", positions.Count);
-        
+
         return positions;
     }
 

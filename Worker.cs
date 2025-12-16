@@ -9,7 +9,7 @@ namespace PowerPositionService;
 public class Worker : BackgroundService
 {
     private const string MutexName = "Global\\PowerPositionService_SingleInstance";
-    
+
     private readonly Scheduler _scheduler;
     private readonly JobProcessor _jobProcessor;
     private readonly ILogger<Worker> _logger;
