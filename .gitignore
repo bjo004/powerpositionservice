@@ -1,0 +1,10 @@
+*.zip
+bin/
+obj/
+PowerPositionService/
+temp/
+*.log
+# PowerPositionService folders
+out/
+done/
+pending/

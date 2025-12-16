@@ -1,0 +1,17 @@
+bin/
+obj/
+out/
+done/
+pending/
+logs/
+temp/
+requirements/
+*.log
+*.user
+.vs/
+.vscode/
+.git/
+.gitignore
+*.md
+LICENSE
+windows.Dockerfile
