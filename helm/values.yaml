@@ -1,5 +1,5 @@
 image:
-  repository: ghcr.io/REPLACE_ORG/REPLACE_REPO
+  repository: ghcr.io/bjo004/power-position-service
   tag: "latest"
   pullPolicy: IfNotPresent
 
@@ -35,4 +35,5 @@ podSecurityContext:
   runAsNonRoot: true
   fsGroup: 2000
 
+# Allow the app to shut down gracefully
 terminationGracePeriodSeconds: 60
