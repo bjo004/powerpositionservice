@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "power-position-service.fullname" . }}-config
+  labels:
+    {{- include "power-position-service.labels" . | nindent 4 }}
+data:
+  appsettings.json: |
+    {
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft.Hosting.Lifetime": "Information"
+        }
+      },
+      "PowerPositionService": {
+        "DailyRunTime": "{{ .Values.powerPositionService.dailyRunTime }}",
+        "TimeZone": "{{ .Values.powerPositionService.timeZone }}",
+        "PowerDayApiUrl": "{{ .Values.powerPositionService.powerDayApiUrl }}",
+        "OutputDirectory": ".",
+        "EnableFileLog": true,
+        "LogDirectory": "."
+      }
+    }

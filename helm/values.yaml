@@ -1,0 +1,38 @@
+image:
+  repository: ghcr.io/REPLACE_ORG/REPLACE_REPO
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+powerPositionService:
+  # Daily run time in Europe/London (HH:mm)
+  dailyRunTime: "23:05"
+  timeZone: "Europe/London"
+  powerDayApiUrl: "http://example"
+
+  # Container paths
+  dataMountPath: "/app/data"
+  outputDirectory: "/app/data/out"
+  logDirectory: "/app/data/logs"
+
+  # K8s best practice: log to stdout/stderr
+  enableFileLog: false
+
+persistence:
+  enabled: true
+  accessModes: ["ReadWriteOnce"]
+  size: 1Gi
+  # storageClassName: ""  # set to override; leave empty to use cluster default
+
+resources: {}
+  # requests:
+  #   cpu: 50m
+  #   memory: 128Mi
+  # limits:
+  #   cpu: 250m
+  #   memory: 256Mi
+
+podSecurityContext:
+  runAsNonRoot: true
+  fsGroup: 2000
+
+terminationGracePeriodSeconds: 60

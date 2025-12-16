@@ -18,6 +18,11 @@ RUN dotnet publish -c Release -o /app/publish --no-restore
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 
+# Install tzdata for proper time zone support
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends tzdata \
+    && rm -rf /var/lib/apt/lists/*
+
 # Create non-root user
 RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 
@@ -33,7 +38,7 @@ COPY --from=build /app/publish .
 ENV DOTNET_ENVIRONMENT=Production
 ENV PowerPositionService__OutputDirectory=/app/data
 ENV PowerPositionService__LogDirectory=/app/logs
-ENV PowerPositionService__EnableFileLog=true
+ENV PowerPositionService__EnableFileLog=false
 
 # Switch to non-root user
 USER appuser
