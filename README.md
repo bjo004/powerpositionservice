@@ -238,13 +238,124 @@ public class Trade
 | Duplicate instance | Second instance exits immediately |
 | Output already exists | Job marked done, skip processing |
 
-# Docker Build
+## Docker
+
+## Build
 
 ```bash
 docker build -t power-position-service .
-docker scout quickview power-position-service:latest
+```
+
+## Run
+
+Basic run:
+
+```bash
+docker run power-position-service:latest
+```
+
+Run in background:
+
+```bash
+docker run -d --name power-position-service power-position-service:latest
+```
+
+## Environment Variable Overrides
+
+Environment variables override `appsettings.json` values. Use double underscore `__` to represent nested config sections.
+
+**Override API URL:**
+
+```bash
+docker run -e PowerPositionService__PowerDayApiUrl=http://api.example.com:8080 power-position-service:latest
+```
+
+**Change scheduled run time:**
+
+```bash
+docker run -e PowerPositionService__DailyRunTime=06:30 power-position-service:latest
+```
+
+**Change timezone:**
+
+```bash
+docker run -e PowerPositionService__TimeZone=America/New_York power-position-service:latest
+```
+
+**Disable file logging:**
+
+```bash
+docker run -e PowerPositionService__EnableFileLog=false power-position-service:latest
+```
+
+**Multiple overrides:**
+
+```bash
+docker run \
+  -e PowerPositionService__PowerDayApiUrl=http://api.example.com:8080 \
+  -e PowerPositionService__DailyRunTime=06:30 \
+  -e PowerPositionService__TimeZone=America/New_York \
+  -e PowerPositionService__EnableFileLog=true \
+  power-position-service:latest
+```
+
+## Persistent Storage
+
+Mount volumes to persist state across container restarts:
+
+```bash
 docker run -d \
   -v $(pwd)/data:/app/data \
   -v $(pwd)/logs:/app/logs \
-  power-position-service
+  power-position-service:latest
+```
+
+This persists:
+
+- `/app/data/pending/` - pending jobs
+- `/app/data/done/` - completed jobs
+- `/app/data/out/` - CSV output files
+- `/app/logs/` - log files
+
+## Production Example
+
+Full production setup with all options:
+
+```bash
+docker run -d \
+  --name power-position-service \
+  --restart unless-stopped \
+  -e PowerPositionService__PowerDayApiUrl=http://powerday-api:8080 \
+  -e PowerPositionService__DailyRunTime=23:05 \
+  -e PowerPositionService__TimeZone=Europe/London \
+  -e PowerPositionService__EnableFileLog=true \
+  -v /opt/power-position/data:/app/data \
+  -v /opt/power-position/logs:/app/logs \
+  power-position-service:latest
+```
+
+## View Logs
+
+```bash
+# Follow logs
+docker logs -f power-position-service
+
+# Last 100 lines
+docker logs --tail 100 power-position-service
+```
+
+## Check Output
+
+```bash
+# List generated CSVs
+docker exec power-position-service ls -la /app/data/out/
+
+# View a CSV
+docker exec power-position-service cat /app/data/out/PowerPosition_20251217.csv
+
+# Check pending jobs
+docker exec power-position-service ls -la /app/data/pending/
+
+# Check completed jobs
+docker exec power-position-service ls -la /app/data/done/
 ```
